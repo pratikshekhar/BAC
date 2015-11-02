@@ -1,0 +1,192 @@
+/******************************************************************************************
+Name: Pratik Shekhar
+Email: pratikshekhar26@gmail.com
+
+*******************************************************************************************/
+
+//---------------------------------------------------------------Header Files-------------------------------------------------------------------------
+
+#include <iostream> // for input and output
+#include <cmath> // for baisc mathematics operations 
+#include <string> // for accepting names 
+#include <iomanip> // for indentations 
+using namespace std;
+
+//------------------------------- The following constants are used in the program to keep track for BAC levels--------------------------------------------
+
+const double safe = 0.00;
+const double someImpairment = 0.04;
+const double significantAffected = 0.08;
+const double someCriminalPenalties = 0.10;
+const double deathPossible = 0.30;
+
+//-------------------------The following constants are used in the program to keep track for different Status ranges for BAC levels--------------------------
+
+const string SAFE = "Safe To Drive";
+const string SOMEIMPAIR = "Some Impairment";
+const string SIGNIFICANT = "Driving Skills Significantly Affected";
+const string MOST_STATES = "Criminal Penalties in Most US States";
+const string ALL_STATES = "Legally Intoxicated - Criminal Penalties in All US States";
+const string YOURE_DEAD = "Death is Possible!";
+
+//-----------------------------------The following function in the program is used to calculate male and female BAC level--------------------------------------
+
+void computeBloodAlcoholConcentration(int numDrinks, int weight, int duration, double &maleBAC, double &femaleBAC)
+{
+// Constant used for the calculation of Male BAC= 3.8; 
+// Constant used for the calculation of Female BAC= 4.5; 
+
+	maleBAC = (numDrinks*1.0 / weight*1.0) *3.8; //calculates male BAC
+	maleBAC -= (0.01*duration / 40.0); // male BAC subtracted by time 
+	femaleBAC = (numDrinks*1.0 / weight*1.0) * 4.5;//calculates female BAC 
+	femaleBAC -= (0.01*duration / 40.0);//female BAC subtracted by time 
+
+//--------------------------------------The following lines of code below makes BAC equals to zero to avoid negatives.-------------------------------------------
+
+	if (maleBAC < 0)
+	{
+		maleBAC = 0;
+	}
+	if (femaleBAC < 0)
+	{
+		femaleBAC = 0;
+	}
+}
+
+//----------------------------------------------The following function is used to return the status of the person-------------------------------------------------
+
+string impairment(double bac)
+{
+//--------------------------------The following are the conditional statements to match BAC number ranges to BAC status ranges-------------------------------------
+
+if (bac == safe)
+{return SAFE;}
+if (bac > safe && bac < someImpairment)
+{return SOMEIMPAIR;}
+if (bac >= someImpairment && bac < significantAffected)
+{return SIGNIFICANT;}
+if (bac >= significantAffected && bac < someCriminalPenalties)
+{return MOST_STATES;}
+if (bac >= someCriminalPenalties && bac <= deathPossible)
+{return ALL_STATES;}
+if (bac > deathPossible)
+{return YOURE_DEAD;}
+
+}
+
+//----------------------The following function is used to state ranges for both weight and time variables for realistic measurements--------------------------
+
+int promptForInteger(string const &message, int lower, int upper)
+{
+//-------------------------------------The int variable "UI_input" holds userinput for weight and times--------------------------------------------------------
+int UI_input; 
+
+//---------------------The "do-while" loop is used in the program for the user to input a number to stick within given bounds-----------------------------------
+
+do
+{
+
+cout << message;
+cin >> UI_input;
+
+} 
+while (UI_input <= lower && UI_input >= upper);
+
+//-----------------------------------------------It returns the value when it exit the "do-while" loop---------------------------------------------------------
+return UI_input; 
+
+}
+
+//-----------------------------------The following function is used in the program to state the gender of the person entered by the user------------------------
+
+char promptForMorF(string const &message)
+{
+
+//-------------------------------------------------- The Char variable "gen" is used in the program to holds gender value----------------------------------------
+char gen; 
+
+//----------------------------------------The "do-while" loop is used after the user enters a character 'M' or 'F' to declare gender------------------------------ 
+
+do
+{
+cout << message;
+cin >> gen;
+} 
+while ((gen != 'M') && (gen != 'F')); 
+
+//-------------------------------------------------------------- It is used to return gender value------------------------------------------------------------------
+return gen; 
+}
+
+//-----------------------------------------------The following function is used to display the chart for BAC information for user-----------------------------------
+
+void showImpairmentChart(int weight, int duration, char isMale)
+{
+int DRINKS = 0; 
+int DRINKS_CONSUMED = 12;
+
+//------------------------------------------------The value of male BAC and female BAC to be used--------------------------------------------------------------------
+
+double malebac; 
+double femalebac; 
+
+//-------------------------------------------------------The value of bac based on 'isMale' value--------------------------------------------------------------------
+
+double bac; 
+
+while (DRINKS <= DRINKS_CONSUMED) 
+{
+cout << setprecision(2) << fixed << setw(8) << DRINKS;
+if (isMale == 'M') 
+{
+computeBloodAlcoholConcentration(DRINKS, weight, duration, malebac, femalebac);
+bac = malebac;
+}
+else 
+{
+computeBloodAlcoholConcentration(DRINKS, weight, duration, malebac, femalebac);
+bac = femalebac;
+}
+cout << setw(6) << bac << "\t" << impairment(bac) << endl; 
+DRINKS++;
+}
+}
+
+//----------------------------------------------------------------The Main Function------------------------------------------------------------------------
+
+int main()
+{
+//------------------------------------------------------------It is used to ask for gender-------------------------------------------------------------------
+
+const string AFG; 
+//------------------------------------------------------------It is used to ask for time---------------------------------------------------------------------
+
+const string AFT; 
+//------------------------------------------------------------It is used to ask for weight--------------------------------------------------------------------
+
+const string AFW; 
+
+//--------------------------------------------------------User enters and intializes their weight---------------------------------------------------------------
+
+cout << "\nWhat is your weight(in pounds): ";
+int weight = promptForInteger(AFW, 100, 350);
+
+//-----------------------------------------------------------User enters and initializes time--------------------------------------------------------------------
+
+cout << "\nHow long has it been since your last drink? (in minutes): ";
+int time = promptForInteger(AFT, 0, 300);
+
+//-----------------------------------------------------------User enters and intializes gender--------------------------------------------------------------------
+
+cout << "\nWhat is your gender? (M or F) : ";
+char gen = promptForMorF(AFG);
+
+//----------------------------------------------------------It is used to make the chart displayed to the user-----------------------------------------------------
+
+cout << endl << weight << " pounds, " << gen << endl;
+cout << "# drinks " << setw(4) << " BAC " << setw(5) << " Status " << endl;
+showImpairmentChart(weight, time, gen);
+
+//-----------------------------------------------------------------The End of the Program---------------------------------------------------------------------------
+
+}
